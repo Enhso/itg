@@ -1,0 +1,12 @@
+{
+  "match_id": "example-04",
+  "shifts": [
+    {
+      "duration_minutes": 12,
+      "kind": "low_block",
+      "minute": 62,
+      "shift_id": "shift-001",
+      "team": "home"
+    }
+  ]
+}

@@ -1,0 +1,393 @@
+{
+  "matches": 32,
+  "players": 1995331,
+  "snapshots": 117666,
+  "source": "StatsBomb Open Data 360 (temporary calibration only)",
+  "templates": {
+    "50/50": {
+      "opponent": {
+        "count": 101,
+        "dx_mean": 2.2959,
+        "dx_std": 8.1229,
+        "dy_mean": -0.7791,
+        "dy_std": 15.1777
+      },
+      "teammate": {
+        "count": 101,
+        "dx_mean": 2.2738,
+        "dx_std": 7.8742,
+        "dy_mean": -0.6966,
+        "dy_std": 15.1789
+      }
+    },
+    "ball receipt*": {
+      "opponent": {
+        "count": 293251,
+        "dx_mean": 8.8819,
+        "dx_std": 13.263,
+        "dy_mean": 0.3968,
+        "dy_std": 20.0947
+      },
+      "teammate": {
+        "count": 275328,
+        "dx_mean": 4.0907,
+        "dx_std": 13.685,
+        "dy_mean": 0.5296,
+        "dy_std": 22.6304
+      }
+    },
+    "ball recovery": {
+      "opponent": {
+        "count": 18355,
+        "dx_mean": 6.3668,
+        "dx_std": 13.0752,
+        "dy_mean": 0.4429,
+        "dy_std": 18.1517
+      },
+      "teammate": {
+        "count": 19836,
+        "dx_mean": 2.3348,
+        "dx_std": 13.05,
+        "dy_mean": 0.57,
+        "dy_std": 17.1883
+      }
+    },
+    "block": {
+      "opponent": {
+        "count": 8545,
+        "dx_mean": 2.0995,
+        "dx_std": 10.5527,
+        "dy_mean": 0.1395,
+        "dy_std": 19.8383
+      },
+      "teammate": {
+        "count": 9973,
+        "dx_mean": -1.1733,
+        "dx_std": 10.1096,
+        "dy_mean": -0.0056,
+        "dy_std": 17.3226
+      }
+    },
+    "carry": {
+      "opponent": {
+        "count": 254507,
+        "dx_mean": 9.1735,
+        "dx_std": 13.2299,
+        "dy_mean": 0.2813,
+        "dy_std": 20.2861
+      },
+      "teammate": {
+        "count": 236902,
+        "dx_mean": 4.2851,
+        "dx_std": 13.7156,
+        "dy_mean": 0.4535,
+        "dy_std": 22.9536
+      }
+    },
+    "clearance": {
+      "opponent": {
+        "count": 6296,
+        "dx_mean": 7.3176,
+        "dx_std": 9.84,
+        "dy_mean": 0.1082,
+        "dy_std": 15.3925
+      },
+      "teammate": {
+        "count": 8601,
+        "dx_mean": 3.6164,
+        "dx_std": 8.8712,
+        "dy_mean": -0.0275,
+        "dy_std": 12.623
+      }
+    },
+    "dispossessed": {
+      "opponent": {
+        "count": 5129,
+        "dx_mean": -1.2998,
+        "dx_std": 10.5648,
+        "dy_mean": 0.1954,
+        "dy_std": 17.9066
+      },
+      "teammate": {
+        "count": 4383,
+        "dx_mean": 2.7963,
+        "dx_std": 10.898,
+        "dy_mean": -0.1134,
+        "dy_std": 20.6395
+      }
+    },
+    "dribble": {
+      "opponent": {
+        "count": 9362,
+        "dx_mean": 1.5081,
+        "dx_std": 10.4135,
+        "dy_mean": -0.5943,
+        "dy_std": 18.6846
+      },
+      "teammate": {
+        "count": 7883,
+        "dx_mean": 0.114,
+        "dx_std": 11.0763,
+        "dy_mean": -0.0829,
+        "dy_std": 21.2265
+      }
+    },
+    "dribbled past": {
+      "opponent": {
+        "count": 5270,
+        "dx_mean": -1.7352,
+        "dx_std": 10.8611,
+        "dy_mean": -0.9859,
+        "dy_std": 20.7206
+      },
+      "teammate": {
+        "count": 6127,
+        "dx_mean": 2.3543,
+        "dx_std": 10.4001,
+        "dy_mean": -1.6559,
+        "dy_std": 18.199
+      }
+    },
+    "duel": {
+      "opponent": {
+        "count": 12008,
+        "dx_mean": 2.3712,
+        "dx_std": 12.0627,
+        "dy_mean": 0.1451,
+        "dy_std": 19.2819
+      },
+      "teammate": {
+        "count": 13727,
+        "dx_mean": 0.3706,
+        "dx_std": 11.6484,
+        "dy_mean": 0.2384,
+        "dy_std": 17.4302
+      }
+    },
+    "error": {
+      "opponent": {
+        "count": 93,
+        "dx_mean": 5.7504,
+        "dx_std": 9.909,
+        "dy_mean": 2.6107,
+        "dy_std": 15.4758
+      },
+      "teammate": {
+        "count": 127,
+        "dx_mean": 2.5755,
+        "dx_std": 10.3109,
+        "dy_mean": 0.6244,
+        "dy_std": 14.7498
+      }
+    },
+    "foul committed": {
+      "opponent": {
+        "count": 6550,
+        "dx_mean": 1.7631,
+        "dx_std": 11.754,
+        "dy_mean": 0.6755,
+        "dy_std": 19.9046
+      },
+      "teammate": {
+        "count": 6795,
+        "dx_mean": -2.6637,
+        "dx_std": 11.4099,
+        "dy_mean": 1.0819,
+        "dy_std": 17.7548
+      }
+    },
+    "foul won": {
+      "opponent": {
+        "count": 6478,
+        "dx_mean": -2.5793,
+        "dx_std": 11.4659,
+        "dy_mean": 1.0344,
+        "dy_std": 17.8878
+      },
+      "teammate": {
+        "count": 6211,
+        "dx_mean": 1.6131,
+        "dx_std": 11.7538,
+        "dy_mean": 0.6818,
+        "dy_std": 20.0455
+      }
+    },
+    "goal keeper": {
+      "opponent": {
+        "count": 2923,
+        "dx_mean": 12.0436,
+        "dx_std": 8.681,
+        "dy_mean": 0.1322,
+        "dy_std": 12.1248
+      },
+      "teammate": {
+        "count": 4405,
+        "dx_mean": 9.725,
+        "dx_std": 7.7747,
+        "dy_mean": 0.1487,
+        "dy_std": 9.0144
+      }
+    },
+    "interception": {
+      "opponent": {
+        "count": 5422,
+        "dx_mean": 5.0029,
+        "dx_std": 11.3324,
+        "dy_mean": -0.3851,
+        "dy_std": 19.9812
+      },
+      "teammate": {
+        "count": 6421,
+        "dx_mean": 0.6867,
+        "dx_std": 11.2183,
+        "dy_mean": -0.2511,
+        "dy_std": 17.0225
+      }
+    },
+    "miscontrol": {
+      "opponent": {
+        "count": 5270,
+        "dx_mean": -1.2301,
+        "dx_std": 10.9966,
+        "dy_mean": -0.6835,
+        "dy_std": 18.8338
+      },
+      "teammate": {
+        "count": 4439,
+        "dx_mean": -5.7837,
+        "dx_std": 11.3163,
+        "dy_mean": -0.3816,
+        "dy_std": 21.315
+      }
+    },
+    "offside": {
+      "opponent": {
+        "count": 97,
+        "dx_mean": -5.6625,
+        "dx_std": 7.6257,
+        "dy_mean": 0.1286,
+        "dy_std": 11.8658
+      },
+      "teammate": {
+        "count": 68,
+        "dx_mean": -7.9924,
+        "dx_std": 8.8069,
+        "dy_mean": 0.0264,
+        "dy_std": 14.5656
+      }
+    },
+    "own goal against": {
+      "opponent": {
+        "count": 34,
+        "dx_mean": 9.5845,
+        "dx_std": 9.6452,
+        "dy_mean": 4.3152,
+        "dy_std": 12.5659
+      },
+      "teammate": {
+        "count": 51,
+        "dx_mean": 5.9851,
+        "dx_std": 7.2856,
+        "dy_mean": 2.7493,
+        "dy_std": 9.7177
+      }
+    },
+    "own goal for": {
+      "opponent": {
+        "count": 34,
+        "dx_mean": 9.5845,
+        "dx_std": 9.6452,
+        "dy_mean": 4.3152,
+        "dy_std": 12.5659
+      },
+      "teammate": {
+        "count": 51,
+        "dx_mean": 5.9851,
+        "dx_std": 7.2856,
+        "dy_mean": 2.7493,
+        "dy_std": 9.7177
+      }
+    },
+    "pass": {
+      "opponent": {
+        "count": 299090,
+        "dx_mean": 9.5796,
+        "dx_std": 12.4637,
+        "dy_mean": 0.3449,
+        "dy_std": 19.1828
+      },
+      "teammate": {
+        "count": 276498,
+        "dx_mean": 4.8086,
+        "dx_std": 13.0991,
+        "dy_mean": 0.537,
+        "dy_std": 22.1293
+      }
+    },
+    "pressure": {
+      "opponent": {
+        "count": 74973,
+        "dx_mean": 1.5293,
+        "dx_std": 12.2706,
+        "dy_mean": 0.0196,
+        "dy_std": 20.429
+      },
+      "teammate": {
+        "count": 81630,
+        "dx_mean": -2.9273,
+        "dx_std": 11.7652,
+        "dy_mean": 0.2113,
+        "dy_std": 17.9171
+      }
+    },
+    "referee ball-drop": {
+      "opponent": {
+        "count": 30,
+        "dx_mean": 10.0602,
+        "dx_std": 18.5878,
+        "dy_mean": 4.5295,
+        "dy_std": 14.7226
+      },
+      "teammate": {
+        "count": 31,
+        "dx_mean": 1.1338,
+        "dx_std": 19.1932,
+        "dy_mean": 9.1088,
+        "dy_std": 16.2666
+      }
+    },
+    "shield": {
+      "opponent": {
+        "count": 124,
+        "dx_mean": 9.2099,
+        "dx_std": 11.9367,
+        "dy_mean": -1.6902,
+        "dy_std": 21.2228
+      },
+      "teammate": {
+        "count": 177,
+        "dx_mean": 6.9059,
+        "dx_std": 10.8935,
+        "dy_mean": -1.1697,
+        "dy_std": 19.3701
+      }
+    },
+    "shot": {
+      "opponent": {
+        "count": 6848,
+        "dx_mean": 0.8766,
+        "dx_std": 9.0233,
+        "dy_mean": 0.3554,
+        "dy_std": 10.6987
+      },
+      "teammate": {
+        "count": 4776,
+        "dx_mean": -1.6755,
+        "dx_std": 8.8861,
+        "dy_mean": 0.2463,
+        "dy_std": 13.5418
+      }
+    }
+  },
+  "version": 1
+}

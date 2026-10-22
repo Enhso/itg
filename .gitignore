@@ -1,0 +1,15 @@
+# Secrets and local machine state
+.env
+.claude/settings.local.json
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Reference papers stay local: some are publisher-copyrighted and the folder is 26 MB
+pdfs/
+
+# Renderer scratch frames left behind by an interrupted run
+data/examples/.*-frames/

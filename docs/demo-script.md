@@ -176,6 +176,7 @@ Must = in PLAN.md's minimum winning slice. Stretch = in PLAN.md's stretch list o
 | 14 | **Visible fault injection**: a flag or button that corrupts one Analyst figure, with an on-screen label | 4b | Must | **Partly.** PLAN's Saturday check needs a "planted wrong number"; the label and a way to trigger it on demand are new. Flag F2 |
 | 15 | Player-focus selector and re-ranked cards | 6c | Stretch | Yes (stretch #1) |
 | 16 | First-draft rejection stat across the precomputed matches | 4c | Stretch | **No. Flag F3** |
+| 17 | Synthetic match footage with overlays synced to it (name tags, speed alerts, the 61' card) | 1, 5 | Stretch (strong extra) | Yes (Sun, strong extra). Flag F6 |
 
 Flags, with a recommended handling for each:
 
@@ -184,6 +185,7 @@ Flags, with a recommended handling for each:
 - **F3, rejection stat.** Count of first drafts rejected, taken from the loop's own logs. If the count is zero, drop the caption.
 - **F4, before/after values.** Confirm the detector's moment object carries them. Shot 3 and the Fact-checker both need them.
 - **F5, demo match shape.** The script wants an away-team high press planted at about 61', visible in the stats, with the equaliser after it. The match comes from the precomputed set on Saturday, so choose a seed that tells this story. If no seed does, any final score works; only the hook's first sentence changes.
+- **F6, footage.** Settled 2026-10-22 as a strong extra, not a requirement. If the footage and its synced overlays are ready by Sunday, Shot 1 opens on the footage and Shot 5's replay plays it with the overlays on top, at no added length. If they are not ready, both shots run as written. The footage must carry the "Synthetic data" caption from Shot 2.
 
 If time cuts the scope, cut in this order: 4c stat, 6c player focus (and its 6 s), then the F1 UI drawer (use the terminal trace). Do not cut the fault injection or the Fact-checker loop. Shot 4 is the prize category.
 

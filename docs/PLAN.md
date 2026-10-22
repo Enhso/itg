@@ -57,7 +57,7 @@ The $100 Azure for Students credit has to cover the build and keep the demo up u
 
 ### Explicitly not doing
 
-Auto-eventing from video, real footage or data, Fabric, AKS, Event Hubs, user accounts, a mobile app, and the M and T layers beyond generator knobs.
+Real footage or data, Fabric, AKS, Event Hubs, user accounts, a mobile app, and the M and T layers beyond generator knobs. Auto-eventing from video moved to the end of the stretch list on 2026-10-22.
 
 ## Where this sits in HATIM
 
@@ -110,10 +110,10 @@ Each weekday session is one small unit that ends in a check. The weekend carries
 | ------------------ | ----- | ------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
 | **Tue 20** (today) | 2 h   | Azure check, ending in one Agent Framework call to a Foundry model. Video script. Repo skeleton and Copilot instructions | An agent replies from this machine; `docs/demo-script.md` reviewed; `uv run pytest` passes on the skeleton |
 | Wed 21             | 1.5 h | Event schema and generator v1: fictional teams and players, team-style knobs                                             | 10 generated matches have event counts and outcome rates in realistic bands                                |
-| Thu 22             | 1.5 h | Planted shifts with a ground-truth file; rolling stats                                                                   | A planted shift shows up in the rolling stats at the planted minute                                        |
-| Fri 23             | 1.5 h | Regime/moment detector, scored against ground truth                                                                      | Detector finds planted shifts within ±N min in most matches (set N and the bar on the day)                 |
+| Thu 22             | 1.5 h | Tracking pivot, units 1a, 1b, and 2 of `docs/briefs/tracking-pivot.md`: event contract, possession spells, IDSSE calibration. The original Thu and Fri goals were done on Tue 20 | Each unit's checks in the brief pass                                                                       |
+| Fri 23             | 1.5 h | Tracking pivot, units 3 and 4: 10 Hz tracking, tracking metrics. **Hard stop at the end of the session**                | Each unit's checks pass. Anything unfinished waits until after Saturday's agent work                       |
 | Sat 24             | long  | Agents: Analyst → Fact-checker loop and Persona; overlay JSON; precompute one demo match                                 | One match end to end gives timed overlay JSON; the fact-checker catches a planted wrong number             |
-| Sun 25             | long  | Web second-screen; deploy to Container Apps; record raw video takes. **Feature freeze tonight**                          | Public URL works from a phone; analyst and casual-fan views are clearly different                          |
+| Sun 25             | long  | Web second-screen; deploy to Container Apps; record raw video takes. Strong extra: footage with synced overlays (`docs/demo-script.md` flag F6). **Feature freeze tonight** | Public URL works from a phone; analyst and casual-fan views are clearly different                          |
 | Mon 26             | 1.5 h | Edit the video (<2:00); README with architecture diagram                                                                 | Someone who hasn't seen it can say what it does after one viewing                                          |
 | Tue 27             | 1.5 h | Pitch text; submit by 12:00 PT. Buffer                                                                                   | Repo public, video public, demo live, form complete                                                        |
 
@@ -122,7 +122,7 @@ Each weekday session is one small unit that ends in a check. The weekend carries
 - **an agent trace view** showing each agent's lane, its tool calls and the fact-checker's verdicts. Agents emit trace events from Saturday. A UI drawer is preferred on Sunday, and a terminal trace is the fallback.
 - **a fault-injection switch** that corrupts one Analyst figure on demand and labels it on screen, so the rejection can be filmed reliably and honestly.
 
-**Stretch, in order:** single agent vs Analyst + Fact-checker comparison, counting wrong figures across the precomputed moments (about 20 min on Saturday; it backs the category's "one agent couldn't do this" claim with a number) → player-focus mode → post-match recap → MCP server exposing match-state tools → voice commentary (Azure AI Speech).
+**Stretch, in order:** single agent vs Analyst + Fact-checker comparison, counting wrong figures across the precomputed moments (about 20 min on Saturday; it backs the category's "one agent couldn't do this" claim with a number) → player-focus mode → post-match recap → MCP server exposing match-state tools → voice commentary (Azure AI Speech) → auto-eventing over the rendered footage, scored against the simulator's truth.
 
 ## Risks
 
@@ -136,6 +136,8 @@ Each weekday session is one small unit that ends in a check. The weekend carries
 - [x] Open questions in `docs/demo-script.md` §4 (1 and 6 are settled; review the rest this afternoon).
 - [x] Use StatsBomb Open Data only as temporary, external calibration input after checking its current license and attribution terms; retain no raw files or real-match fixtures. The shipped generator remains fictional, seedable, and tuned first for the planted demo story. See `docs/data-generation.md`.
 
+Settled 2026-10-22: generated video is a strong extra, not a requirement. Rule 4.7's "Footage" means any match material, and the synthetic event stream already satisfies it. The tracking pivot gets Thu and Fri only, with a hard stop. Datasets: IDSSE (CC-BY 4.0) calibrates tracking. SkillCorner body pose (MIT) is deferred. SoccerNet-GAR (NDA, real broadcast footage), Metrica (no license), and Google Research Football (archived, 5-minute games, no tactical knob) are dropped.
+
 Settled 2026-10-20: solo, registered, Azure for Students with $100 credit, 1.5 h on weekdays and 3–6 h on Sat and Sun, Best Multi-Agent System, product name **ITG-IIMA**, languages English and French.
 
 ## Log
@@ -148,3 +150,4 @@ Settled 2026-10-20: solo, registered, Azure for Students with $100 credit, 1.5 h
 - **2026-10-20:** Calibrated a compact Markov motion/type model from 120 StatsBomb Open Data matches (254,138 events), retained only aggregate parameters in `data/models/statsbomb_markov.json`, and wired the generator to produce correlated trajectories. Same-team mean spatial jumps fell by about 33% against the independent baseline; the full test suite and 20-match planted-shift stress check pass.
 - **2026-10-20:** Corrected the pipeline to native StatsBomb `120x80` coordinates, added bounded StatsBomb 360 calibration from 32 matches (117,666 snapshots), and rewrote footage rendering around replay time with 22 role-aware markers plus a short event-time window. Raw 360 data remains external; only aggregate templates are stored.
 - **2026-10-20:** Follow-up rendering redesign session: added `src/itg/pitch.py` as the canonical `120x80` coordinate seam; refit `data/models/statsbomb_markov.json` in native coordinates; added `scripts/fit_statsbomb_360.py` with parallel bounded downloads and produced `data/models/statsbomb_360_templates.json` from 32 matches, 117,666 snapshots, and 1,995,331 freeze-frame player observations. Added `src/itg/scene.py` for fictional role-aware 22-player scenes calibrated by 360 summaries, changed `src/itg/footage.py` to select events by replay timestamp and render a short time window, and replaced frame-by-frame random placement with smooth deterministic motion. Updated generator/interpret coordinate bounds, tests, and data-generation documentation. Validation: 9 tests pass; 22-player scenes stay in bounds; 0.1-second player movement is below 1 pitch unit; planted-shift detection remains valid. The result is better but still not sufficiently football-realistic: the next session should focus on possession-aware state, actual role identity/formation behavior, event timing/sequence fields, and a comparative model-quality evaluation.
+- **2026-10-22:** Reviewed five open datasets for the simulation pivot and settled their roles (see Open questions). Measured why the footage cannot look like football yet. The generator picks each event's team with a coin flip, so example-01's 1,966 on-ball events form 931 same-team runs (mean 2.11 events) and possession changes about 10 times a minute. Wrote `docs/briefs/tracking-pivot.md` for Copilot: possession spells, IDSSE calibration, 10 Hz tracking, and tracking metrics. Added `.gitignore` and committed the 2026-10-20 slice as `e192171`.

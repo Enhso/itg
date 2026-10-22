@@ -28,17 +28,12 @@ A brief is ready when every unit has a branch, numbered steps, and checks that C
 - Start from the schedule in `docs/PLAN.md`, the previous brief, its log, and your last review.
 - Order the units by what the plan's next milestone depends on. Size them to one session and name the stop point.
 - Verify every fact the brief states about the outside world by running something: dataset ids, URLs, file sizes, library signatures, field names, and the test results Copilot will start from. Mark those facts as verified, with the date.
-- Give each unit a branch name and the exact git commands. A unit merges into `main` only after its checks pass, so `main` always works.
-- Write each check as a command with a pass condition. Tests read their targets from the data files, never from numbers typed into the test.
+- Point the brief at the standing rules in `.github/copilot-instructions.md` instead of restating them. They cover branches, checks, external data, code style, and the report. When a lesson applies to every session, propose adding it to those rules.
+- Give each unit a branch name and the exact git commands.
+- Write each check as a command with a pass condition.
 - Pair every visual or human check with a numeric check that fails on the same defect.
-- For external data, require all of the following:
-	- The fit script downloads the source in the same run. When it cannot, it exits non-zero and writes nothing.
-	- The output records its provenance: the source, the ids read, and the row or frame counts.
-	- An offline test asserts that provenance.
-	- A second run reproduces the output byte for byte.
-- When a brief allows a threshold change, it asks for the old value, the new value, and the reason. A condition keeps its direction.
+- For each fit script, name its provenance fields and its guards.
 - List what is out of scope.
-- Ask for the report in a fixed shape: what changed, each check with its command and raw output, each deviation with its reason, then **Snags**, **Wants**, and **Distress** if there is any.
 - Write with the `pstack:technical-writing` skill: numbered steps, one instruction per sentence, real file and symbol names.
 
 ## Reviewing Copilot's work

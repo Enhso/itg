@@ -17,16 +17,10 @@ This session fixes the event stream and replaces both calibration files with rea
 
 ## Rules for this session
 
-- Every number in a file under `data/models/` comes from a script that downloads and reads the source data in the same run. When the download fails, the script exits with a non-zero code and writes nothing. Stop that unit and put the error output in the log.
-- When a check fails and the fix is unclear, stop that unit. Put the command and its output in the log, then start the next unit.
-- Checks keep the thresholds this brief gives them. Tests read their targets from the calibration files.
-- Run Python only through `uv run`.
-- Keep raw StatsBomb and IDSSE files outside the repository. Read StatsBomb over HTTPS into memory. kloppy caches IDSSE downloads in `~/kloppy_cache`.
-- The runtime package `src/itg` stays standard-library only. Fit scripts may use packages from the `calibration` dependency group.
-- Keep the existing style: frozen dataclasses, short modules, and named constants for tuned numbers.
-- Commit at the end of each unit, on its branch. Merge a unit into `main` only after its checks pass.
+- Follow the standing rules in `.github/copilot-instructions.md`, under **Working from a brief**. They cover branches, checks, external data, code style, and the report.
+- Read StatsBomb over HTTPS into memory. kloppy caches IDSSE downloads in `~/kloppy_cache`, outside the repository.
 - Do the units in order. Unit 2 needs Unit 1. Unit 3 needs neither, so if Unit 1 or Unit 2 is stuck, leave it on its branch and do Unit 3.
-- **Hard stop.** Stop at the end of today's session. An unfinished unit stays on its branch, with a log entry that says where it stopped.
+- **Hard stop.** Stop at the end of today's session.
 
 ## Facts verified on 2026-10-22
 
@@ -77,7 +71,7 @@ Branch: `rework-events`, created from `main`.
 3. Give the script the options `--matches` (default 60), `--workers` (default 12), and `--output` (default `data/models/statsbomb_spells.json`).
 4. Import `_get_json` and `BASE_URL` from `scripts/fit_statsbomb_model.py`. Run the script as a module, `uv run python -m scripts.fit_statsbomb_spells`, so that the import works.
 5. Select the same matches on every run. Walk `competitions.json` in file order and keep the rows whose `competition_gender` is `male`. Take at most 10 matches from each competition season, in its matches file order, until you have `--matches` of them. The cap keeps one team's season from dominating the sample.
-6. Download the event files in parallel and keep them in memory. If any download fails, exit with a non-zero code and write nothing.
+6. Download the event files in parallel and keep them in memory.
 7. Use periods 1 and 2 only. A match's length in minutes is the sum of the last `timestamp` in each period, divided by 60.
 8. Compute the aggregates below. Write them to `--output` with `json.dumps(..., indent=2, sort_keys=True)`.
 9. Print every value in the output as a readable summary.
@@ -135,15 +129,13 @@ Write this shape. The quantiles are `p10`, `p50`, and `p90` unless the shape say
 - The two gap distributions store more quantiles and a mean, because stoppages give them a long tail.
 - `pressures_per_defending_second` is the number of `Pressure` events by the team without the ball, summed over spells, divided by the summed spell durations.
 
-The script exits non-zero and writes nothing when a guard below fails. The guards catch unit and coordinate mistakes. They are wide estimates, not targets.
+The script exits non-zero and writes nothing when a guard below fails. The ranges are wide estimates, not targets.
 
 - `matches_read` equals `matches_requested`.
 - The p50 of `spell_changes_per_minute` is between 1.0 and 3.5.
 - The p50 of `pass_length_m` is between 8 and 30.
 - `per_team_per_90.shot` is between 5 and 25.
 - `per_team_per_90.pressure` is between 60 and 250.
-
-If real data falls outside a guard after you rule out a bug, widen that guard and give the reason in the log.
 
 ### Unit 1 checks
 
@@ -205,7 +197,7 @@ These are the detector conditions on `main`:
 | `direct_attack`    | `shot_delta >= 4 and carry_delta >= 2 and tilt_delta >= 4` |
 | `low_block`        | `tackle_delta >= 2 and tilt_delta <= -4`                   |
 
-If the detector misses a kind, strengthen that kind's multipliers first. Retune a detector condition only when stronger multipliers fail. For each retune, log the old value, the new value, and the reason. Each condition keeps its direction. For example, `high_press` always requires field tilt to rise.
+If the detector misses a kind, strengthen that kind's multipliers first. Retune a detector condition only when stronger multipliers fail, and follow the threshold rule in `.github/copilot-instructions.md`. For example, `high_press` always requires field tilt to rise.
 
 ### Unit 2 checks
 
@@ -321,7 +313,7 @@ Fill every role group in `speed_ms`, `acceleration_ms2_p99`, and `distance_m_per
 
 ### Guards
 
-The script exits non-zero and writes nothing when a guard fails. The ranges are wide estimates that catch unit and coordinate mistakes. They are not targets.
+The script exits non-zero and writes nothing when a guard fails. The ranges are wide estimates, not targets.
 
 - Every role group's `p99.9` speed is between 6 and 11.5 m/s.
 - The `p50` shot speed is between 12 and 40 m/s.
@@ -329,8 +321,6 @@ The script exits non-zero and writes nothing when a guard fails. The ranges are 
 - In-play frames per match are between 50,000 and 130,000 at 25 fps. Scale the range by the sample rate.
 - `ball_owning_team` is set on at least 80% of in-play frames.
 - At least 99.9% of player positions lie within 2 m of the pitch.
-
-If real data falls outside a guard after you rule out a bug, widen that guard and give the reason in the log.
 
 ### Unit 3 checks
 
@@ -359,15 +349,7 @@ Leave these for later briefs, even if you finish early:
 
 ## How to report
 
-Write the report in `docs/briefs/tracking-rework-log.md`. For each unit, give:
-
-1. what changed, by file;
-2. each check with its exact command and raw output, or the last 20 lines of a longer output;
-3. each deviation from this brief, with its reason.
-
-End the report with three headings. **Snags** covers friction, such as a tool that misbehaved or instructions that conflicted. **Wants** covers a tool or capability that would have helped. **Distress** covers a task shape that felt contradictory or ambiguous, if there was one.
-
-Add one line per finished unit to the log in `docs/PLAN.md`. Keep the report and the `docs/PLAN.md` change uncommitted while you work. No unit branch touches those files, so they stay in place when you switch branches. At the end of the session, commit them on `main`:
+Write the report in `docs/briefs/tracking-rework-log.md`, in the shape `.github/copilot-instructions.md` gives. At the end of the session, commit it and the `docs/PLAN.md` log lines on `main`:
 
 ```bash
 git switch main

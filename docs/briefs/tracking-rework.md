@@ -36,8 +36,9 @@ Claude checked these facts on this machine before writing the brief.
 - `main` plus the draft's `src/itg/models.py`, `src/itg/pitch.py`, and `src/itg/generator.py` gives 8 passed and 1 failed. The failure is `tests/test_interpret.py::test_detector_finds_each_supported_shift_kind` on `direct_attack`.
 - StatsBomb event files carry `possession`, `possession_team`, `team`, `period`, `timestamp` (period-relative, `HH:MM:SS.mmm`), `minute` (cumulative across periods), `location`, and `duration`. Pass events have `pass.end_location`, `pass.recipient`, and `pass.outcome`. A missing `pass.outcome` means the pass was complete. Carry events have `carry.end_location`. Tackles are `Duel` events whose `duel.type.name` is `Tackle`. Receipts are `Ball Receipt*` events. Every location is in the acting team's attacking frame.
 - One Bundesliga match, `3895292`, has 166 possessions in about 97 minutes, with 1,080 passes, 905 carries, 278 pressures, and 29 shots. Use it only as a sanity reference.
-- `competitions.json` lists 80 competition seasons. The first is the men's 1. Bundesliga 2023/2024.
-- The draft's `uv.lock` resolved kloppy 3.19.1. Its signatures are `kloppy.sportec.load_open_tracking_data(match_id, sample_rate=None, limit=None, coordinates=None, only_alive=False)` and `kloppy.sportec.load_open_event_data(match_id, event_types=None, coordinates=None, event_factory=None)`.
+- `competitions.json` lists 80 competition seasons, 67 of them men's. The first is the men's 1. Bundesliga 2023/2024 (`competition_id` 9, `season_id` 281), whose matches file lists only 34 matches.
+- StatsBomb `duration` covers the action only. In match `3895292`, on-ball events average about 1.9 s of match time each, so stoppages and gaps hold much of a match's time.
+- The draft's `uv.lock` resolved kloppy 3.19.1, and every kloppy fact below is checked against that version. Its signatures are `kloppy.sportec.load_open_tracking_data(match_id, sample_rate=None, limit=None, coordinates=None, only_alive=False)` and `kloppy.sportec.load_open_event_data(match_id, event_types=None, coordinates=None, event_factory=None)`.
 - `sample_rate` is a fraction of frames. `sample_rate=0.2` keeps every fifth frame.
 - The valid IDSSE match ids are `J03WMX`, `J03WN1`, `J03WOH`, `J03WOY`, `J03WPY`, `J03WQQ`, and `J03WR9`. The ids `J03WPF` and `J03WQF` in the old brief are wrong.
 - kloppy downloads IDSSE from the Hugging Face dataset `pysport/idsse-data`. Each tracking XML is 349 to 419 MB. The event XML for `J03WPY` is 0.7 MB.
@@ -75,7 +76,7 @@ Branch: `rework-events`, created from `main`.
 2. Create `scripts/fit_statsbomb_spells.py` as a new file. The draft's version on `pivot-draft` is hard-coded, so nothing in it carries over.
 3. Give the script the options `--matches` (default 60), `--workers` (default 12), and `--output` (default `data/models/statsbomb_spells.json`).
 4. Import `_get_json` and `BASE_URL` from `scripts/fit_statsbomb_model.py`. Run the script as a module, `uv run python -m scripts.fit_statsbomb_spells`, so that the import works.
-5. Select the same matches on every run. Walk `competitions.json` in file order and keep the rows whose `competition_gender` is `male`. Take each competition's matches in file order until you have `--matches` of them.
+5. Select the same matches on every run. Walk `competitions.json` in file order and keep the rows whose `competition_gender` is `male`. Take at most 10 matches from each competition season, in its matches file order, until you have `--matches` of them. The cap keeps one team's season from dominating the sample.
 6. Download the event files in parallel and keep them in memory. If any download fails, exit with a non-zero code and write nothing.
 7. Use periods 1 and 2 only. A match's length in minutes is the sum of the last `timestamp` in each period, divided by 60.
 8. Compute the aggregates below. Write them to `--output` with `json.dumps(..., indent=2, sort_keys=True)`.
@@ -88,6 +89,9 @@ Use these definitions:
 - A spell's **on-ball events** are its `Pass`, `Carry`, `Shot`, and `Ball Receipt*` events whose `team.id` is the owner. Skip spells with no on-ball events, and count them in the provenance.
 - A spell's **duration** is its last event's timestamp minus its first, in seconds.
 - A spell's **end** is `shot` when the owner's last on-ball event is a `Shot`. It is `incomplete_pass` when that event is a `Pass` with a `pass.outcome`. It is `other` in every other case.
+- An event **ends** at its timestamp plus its `duration`, or at its timestamp when it has no `duration`.
+- `gap_within_spell_s` is the time from the end of one owner on-ball event to the start of the next owner on-ball event in the same spell, floored at 0.
+- `gap_between_spells_s` is the time from the end of a spell's last event to the start of the next spell's first event, within the same period.
 - **Core actions** are `Pass`, `Carry`, `Pressure`, and `Shot` events by either team.
 - Convert lengths to metres with `itg.pitch.to_metres` on the x and y differences, then take the distance.
 - **Field tilt** for a 5-minute window is the home team's share, in percent, of the window's events with `location[0] >= 66`. The windows are minutes 0 to 4, 5 to 9, and so on up to 89, by the `minute` field. Count `Pass`, `Carry`, `Shot`, `Pressure`, `Ball Receipt*`, and `Duel` tackle events. This mirrors `rolling_stats` in `src/itg/interpret.py`. The home team is `home_team` in the matches file.
@@ -98,7 +102,7 @@ Write this shape. The quantiles are `p10`, `p50`, and `p90` unless the shape say
 {
 	"provenance": {
 		"source": "StatsBomb Open Data",
-		"selection": "first N male matches in competitions.json order",
+		"selection": "at most 10 matches per male competition season, in competitions.json order",
 		"matches_requested": 60,
 		"matches_read": 60,
 		"match_ids": [],
@@ -113,6 +117,8 @@ Write this shape. The quantiles are `p10`, `p50`, and `p90` unless the shape say
 	"spell_changes_per_minute": {"p10": 0.0, "p50": 0.0, "p90": 0.0},
 	"on_ball_events_per_spell": {"p10": 0, "p50": 0, "p90": 0, "histogram": {"1": 0.0, "2": 0.0, "40+": 0.0}},
 	"spell_duration_s": {"p10": 0.0, "p50": 0.0, "p90": 0.0},
+	"gap_within_spell_s": {"p1": 0.0, "p5": 0.0, "p10": 0.0, "p25": 0.0, "p50": 0.0, "p75": 0.0, "p90": 0.0, "p95": 0.0, "p99": 0.0, "mean": 0.0},
+	"gap_between_spells_s": {"p1": 0.0, "p5": 0.0, "p10": 0.0, "p25": 0.0, "p50": 0.0, "p75": 0.0, "p90": 0.0, "p95": 0.0, "p99": 0.0, "mean": 0.0},
 	"spell_end_shares": {"shot": 0.0, "incomplete_pass": 0.0, "other": 0.0},
 	"pressures_per_defending_second": 0.0,
 	"pass_length_m": {"p10": 0.0, "p50": 0.0, "p90": 0.0},
@@ -126,6 +132,7 @@ Write this shape. The quantiles are `p10`, `p50`, and `p90` unless the shape say
 - `per_team_per_90` counts each team's events, scales them to 90 minutes by the match length, and averages over teams and matches.
 - `spell_changes_per_minute` is each match's spell count divided by its length, with quantiles across matches.
 - The histogram gives the share of spells for each on-ball event count from 1 to 39, and `40+` for the rest.
+- The two gap distributions store more quantiles and a mean, because stoppages give them a long tail.
 - `pressures_per_defending_second` is the number of `Pressure` events by the team without the ball, summed over spells, divided by the summed spell durations.
 
 The script exits non-zero and writes nothing when a guard below fails. The guards catch unit and coordinate mistakes. They are wide estimates, not targets.
@@ -174,9 +181,10 @@ Keep `models.py` and `pitch.py` as they are. `generator.py` is the code you corr
 	- For `shot`, the owner shoots. The shot ends at `x = 120`, with `y` between 36 and 44. The next spell starts at the mirrored point, where the goalkeeper has the ball.
 	- For `incomplete_pass`, the owner's last action is a pass with outcome `incomplete`. The next spell starts at the pass's end location, mirrored.
 	- For `other`, a defender makes a `tackle` at the ball after the owner's last action. The next spell starts at the tackle's location.
-4. **Spell length.** Line 99 draws `uniform(13, 24)` seconds. Draw the spell's number of on-ball events from the `on_ball_events_per_spell` histogram instead. Time then follows from the action durations.
-5. **Durations and lengths.** Draw pass durations from `pass_duration_s_by_length` for the pass's length group, and carry durations from `carry_duration_s`. Draw pass and carry lengths from `pass_length_m` and `carry_length_m`. To draw from p10, p50, and p90, draw a quantile uniformly between 0.1 and 0.9 and interpolate linearly between the three values. Point passes and carries forward on average, and keep the spread in a named constant.
-6. **Pressure rate.** Line 161 sets `max(pressure_rate, 0.7)`. Instead, after each action, add a pressure with probability `1 - exp(-rate * action_duration)`, where `rate` is `pressures_per_defending_second`.
+4. **Spell length.** Line 99 draws `uniform(13, 24)` seconds. Draw the spell's number of on-ball events from the `on_ball_events_per_spell` histogram instead. Time then follows from the action durations and the gaps in correction 5.
+5. **Durations, lengths, and gaps.** Draw pass durations from `pass_duration_s_by_length` for the pass's length group, and carry durations from `carry_duration_s`. Draw pass and carry lengths from `pass_length_m` and `carry_length_m`. After each on-ball action, advance time by a draw from `gap_within_spell_s`. Between spells, advance time by a draw from `gap_between_spells_s`. Point passes and carries forward on average, and keep the spread in a named constant.
+	- To draw from a distribution, draw a quantile uniformly between its lowest and highest stored percentile, then interpolate linearly between the stored values. That range is 0.1 to 0.9 for p10, p50, and p90, and 0.01 to 0.99 for the gaps.
+6. **Pressure rate.** Line 161 sets `max(pressure_rate, 0.7)`. Instead, after each action, add a pressure with probability `1 - exp(-rate * elapsed)`. Here `rate` is `pressures_per_defending_second`, and `elapsed` is the action's duration plus the gap that follows it.
 7. **Planted shifts.** Lines 115 to 135 move an action's start location during a shift, which makes the ball jump. Delete them. Express each shift through spell parameters only: the pressure rate, the spell length, the end shares, how far forward passes and carries go, and the mix of passes, carries, and shots. Put the multipliers in named constants at the top of the module. Start from these values:
 	- `high_press`: while the shift team defends, its pressure rate doubles, the opponent's spells are 40% shorter, and the opponent's `other` share doubles.
 	- `low_block`: while the shift team defends, its pressure rate halves, the opponent passes and carries further forward, and the opponent's `other` share doubles.
@@ -207,6 +215,7 @@ Put the new tests in `tests/test_spells.py`. Each test reads its targets from `d
 2. Generate seeds 1 to 10 with the default `MatchConfig` and average over them. Each of these is within 25% of the calibration:
 	- spell changes per minute, against the p50;
 	- the median number of on-ball events per spell, against the p50;
+	- the median spell duration, against `spell_duration_s.p50`;
 	- passes, carries, pressures, and shots per team per 90 minutes;
 	- core actions per minute.
 3. For seed 61, every spell ends with exactly one turnover. The owner's last on-ball action is a shot or an incomplete pass, or the spell's last event is a tackle by the other team. No shot or incomplete pass comes before a spell's last action.
@@ -237,7 +246,7 @@ Branch: `rework-idsse`, created from `main`.
 ### Set up
 
 1. Run `git switch -c rework-idsse main`.
-2. Run `uv add --group calibration kloppy`. If you use `numpy`, add it to the same group.
+2. Run `uv add --group calibration "kloppy==3.19.1"`. The facts in this brief are checked against that version. If you use `numpy`, add it to the same group.
 3. Add the IDSSE paragraph to `docs/data-generation.md`. Copy it from `git show pivot-draft:docs/data-generation.md`, and leave the rest of the file as it is on `main`.
 4. Create `scripts/fit_idsse_tracking.py` as a new file. The draft's version reads its own output, so nothing in it carries over.
 5. Give the script the options `--matches` (default 2), `--limit` (default none), and `--sample-rate` (default 1.0). Take match ids in this order: `J03WPY`, `J03WMX`, `J03WN1`, `J03WOH`, `J03WOY`, `J03WQQ`, `J03WR9`.
